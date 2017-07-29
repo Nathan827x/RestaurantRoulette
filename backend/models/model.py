@@ -6,7 +6,7 @@ db = SQLAlchemy()
 class Users(db.Model):
     username = db.Column(db.String(150), primary_key=True)
     password = db.Column(db.String(150))
-    fav_list = db.relationship('Favorites', backref='Users', lazy='dynamic')
+    fav_list = db.relationship('Favorites', cascade="all,delete", backref='Users', lazy='dynamic')
 
     def __init__(self, username, password):
         self.username = username
