@@ -1,13 +1,18 @@
 from flask import Flask, request, jsonify, json
 from flask_sqlalchemy import SQLAlchemy
-from marshmallow import Schema, fields, ValidationError, pre_load
-from models.model import db, Users, Favorites
+from models.model import db, Users, Favorites, UserSchema, FavoritesSchema
 
 app = Flask(__name__)
 db.init_app(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:admin@localhost/RestaurantRoulette'
 
+
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+favorite_schema = FavoritesSchema()
+favorites_schema = FavoritesSchema(many=True, only=('id', 'content'))
 ############# Register API requests ###################
 # Accounting for
 @app.route('/register', methods=['POST'])
@@ -26,16 +31,19 @@ def user():
     # For profile
     if (request.method == 'GET'):
         username = request.headers['username']
-        email = Users.query.filter_by(username=username).first()
-        return ("This is a get request " + email.username)
+        users = Users.query.filter_by(username=username).all()
+        # Serialize the queryset
+        result = users_schema.dump(users)
+        return jsonify({'username': result.data[0]["username"]})
 
     # Checking username and password verification
     elif (request.method == 'POST'):
         username = request.json['username']
         password = request.json['password']
-        email = Users.query.filter_by(username=username).first()
-        if (username == email.username):
-            if (password == email.password):
+        email = Users.query.filter_by(username=username).all()
+        result = users_schema.dump(email)
+        if (username == result.data[0]["username"]):
+            if (password == result.data[0]["password"]):
                 return ("This post request was succesful.")
 
         return ("This Login Request has failed")

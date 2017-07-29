@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from marshmallow import Schema, fields, ValidationError, pre_load
 
 db = SQLAlchemy()
 
@@ -28,3 +29,19 @@ class Favorites(db.Model):
 
     def __repr__(self):
         return '<Favorites %r>' % self.fav_id
+
+
+###################### SCHEMAS #########################
+class UserSchema(Schema):
+    username = fields.Str()
+    password = fields.Str()
+
+        # Custom validator
+def must_not_be_blank(data):
+    if not data:
+        raise ValidationError('Data not provided.')
+
+class FavoritesSchema(Schema):
+    fav_id = fields.Int(dump_only=True)
+    username = fields.Nested(UserSchema, validate=must_not_be_blank)
+    restaurant_name = fields.Str(required=True, validate=must_not_be_blank)
