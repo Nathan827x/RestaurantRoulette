@@ -50,7 +50,7 @@ def user():
             db.session.commit()
             return ("The delete request was succesful")
         except Exception ,e:
-            return("Failed Delete Request" + str(e))
+            return("Failed Delete Request")
 
 ############## favoites API requests ##########################
 # profile or a way to show the list of what they have as favorites
