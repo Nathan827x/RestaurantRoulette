@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, json
 from flask_sqlalchemy import SQLAlchemy
 from models.model import db, Users, Favorites, UserSchema, FavoritesSchema
+from key import key
+import requests
 
 app = Flask(__name__)
 db.init_app(app)
@@ -41,7 +43,7 @@ def user():
         username = request.json['username']
         password = request.json['password']
         email = Users.query.filter_by(username=username).all()
-        result = users_schema.dump(email)
+        result = users_schema.dump(users)
         if (username == result.data[0]["username"]):
             if (password == result.data[0]["password"]):
                 return ("This post request was succesful.")
@@ -100,6 +102,32 @@ def favorites():
             return ("This is a delete request")
         except Exception ,e:
             return("Failed Delete Request")
+
+####################### Google Maps API ################################
+search_url = "https://maps.googleapis.com/maps/api/place/textsearch/json?type=restaurant"
+details_url = "https://maps.googleapis.com/maps/api/place/details/json"
+
+@app.route('/maps/<string:query>')
+def maps(query):
+    search_payload = {"key":key, "query":query}
+    search_req = requests.get(search_url, params=search_payload)
+    search_json = search_req.json()
+    dictLength = len(search_json)
+    RestaurantNames = [search_json["results"][item]['name'] for item in range(0,dictLength)]
+    # return (jsonify(names = RestaurantNames))
+    # return (jsonify(search_json))
+
+    place_id = search_json["results"][0]["place_id"]
+
+    details_payload = {"key":key, "placeid":place_id}
+    details_resp = requests.get(details_url, params=details_payload)
+    details_json = details_resp.json()
+
+    return(jsonify(details_json))
+    url = details_json["result"]["url"]
+    # return jsonify({'result' : url})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
