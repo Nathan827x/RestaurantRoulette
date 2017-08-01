@@ -3,9 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from models.model import db, Users, Favorites, UserSchema, FavoritesSchema
 from key import key
 import requests
+from flask_cors import CORS, cross_origin
+
 
 app = Flask(__name__)
 db.init_app(app)
+CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:admin@localhost/RestaurantRoulette'
 
