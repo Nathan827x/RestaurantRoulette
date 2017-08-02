@@ -22,12 +22,15 @@ favorites_schema = FavoritesSchema(many=True, only=('id', 'content'))
 # Accounting for
 @app.route('/register', methods=['POST'])
 def register():
-    username = request.json['username']
-    password = request.json['password']
-    insertTest = Users(username, password)
-    db.session.add(insertTest)
-    db.session.commit()
-    return ("This post request was succesful.")
+    try:
+        username = request.json['username']
+        password = request.json['password']
+        insertTest = Users(username, password)
+        db.session.add(insertTest)
+        db.session.commit()
+        return ("Successfully Registered!")
+    except:
+        return ('Registeration was Not Successful')
 
 
 ############# user API requests ###################

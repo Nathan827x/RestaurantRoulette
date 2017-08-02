@@ -9,15 +9,15 @@ class Home extends Component {
 
   componentDidMount() {
     fetch('http://127.0.0.1:5000/favorites')
-      .then(function(response) {
+      .then((response) => {
         return response.json()
       })
       .then((json) => {
-        console.log('parsed json', json[0]['restaurant_name'])
+        this.setState({
+          "restaurant_name": json[0]['restaurant_name']
+        })
       })
-      .then((json) => { console.log("this is json", json )
-      })
-      .catch(function(ex) {
+      .catch((ex) =>  {
         console.log('parsing failed', ex)
       })
     }
