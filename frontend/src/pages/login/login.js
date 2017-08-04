@@ -18,10 +18,6 @@ class Login extends Component {
     return(
       <div>
         <h1> Login Page </h1>
-        <h1>Users</h1>
-        {this.state.users.map(user =>
-         <div key={user.id}>{user.username}</div>
-        )}
       </div>
     )
   }

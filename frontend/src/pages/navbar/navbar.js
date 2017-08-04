@@ -17,7 +17,6 @@ import './navbar.css'
 
 class NavBar extends Component {
   render() {
-    console.log(this.props)
     return (
       <div className="Navbar">
         <nav className="navbar navbar-default">
@@ -28,7 +27,9 @@ class NavBar extends Component {
             <li>
              <Link to='login'> Login </Link>
             </li>
-
+            <li>
+             <Link to='register'> Register </Link>
+            </li>
           </ul>
         </nav>
       </div>
