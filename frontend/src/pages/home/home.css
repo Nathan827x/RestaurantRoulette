@@ -1,0 +1,10 @@
+/*Just testing CSS*/
+.SearchMap{
+  background-size: 100%;
+  background-color: Orange;
+}
+
+.Map {
+  height: 400px;
+  width: 400px;
+}
