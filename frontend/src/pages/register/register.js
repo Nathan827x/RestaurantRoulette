@@ -25,13 +25,18 @@ class Register extends Component {
 
   register(){
     console.log('Register')
+    console.log(this.state.username)
     fetch('http://127.0.0.1:5000/register', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
         username: this.state.username,
         password: this.state.password,
       })
     })
+
   }
 
   render(){
