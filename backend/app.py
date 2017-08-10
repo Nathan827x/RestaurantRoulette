@@ -140,21 +140,15 @@ details_url = "https://maps.googleapis.com/maps/api/place/details/json"
 @app.route('/maps')
 def maps():
     params = {
-        'radius': request.args.get('radius') or '8000',
-        'location': request.args.get('location')
-    }
-
-    test = {
      'query': request.args.get('location'),
-     'radius': request.args.get('radius') or '8000',
+     'radius': request.args.get('radius') or '5000',
      'type': 'restaurant',
      'key': key
     }
     ########BY DEFAULT IT WILL SEND A LOT OF PLACES!!!! NO FIX YET BY GOOGLE
-    search_json = requests.get(search_url, params=test).json()
+    search_json = requests.get(search_url, params=params).json()
+    # print search_json
     results = {}
-    ## Should limit to 5 times to limit the details api call
-
     # for index, restaurant in enumerate(search_json["results"]):
     flag = True
     while flag:
@@ -164,7 +158,7 @@ def maps():
             results['location'] = restaurant['geometry']['location']
             results['name'] = restaurant['name']
             results['address'] = restaurant['formatted_address']
-            # Getting Phone Numbers
+            # Getting Phone Number
             details_payload = {"key": key, "placeid": restaurant['place_id']}
             details_resp = requests.get(details_url, params=details_payload)
             details_json = details_resp.json()

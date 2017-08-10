@@ -1,55 +1,77 @@
-import React, { Component } from 'react';
-import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps'
+import React from 'react'
+import { withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
+import withScriptjs from "react-google-maps/lib/async/withScriptjs"
 
-class Map extends Component {
-  constructor(){
-    super();
+class Map extends React.Component{
+
+  constructor(props){
+    super(props)
     this.state = {
-      markers: []
+      markers: [],
+      center: {
+        lat: 40.7128,
+        lng: -74.0059
+      }
     }
   }
 
-  handleMapClick(event) {
-    const nextMarkers = [
-      ...this.state.markers,
-      {
-        position: event.latLng,
+  componentWillReceiveProps(nextProps){
+      this.setState({
+        markers: [{
+        position: {
+          lat: nextProps.location.lat,
+          lng: nextProps.location.lng,
+        },
+        key: Date.now(),
         defaultAnimation: 2,
-        key: Date.now(), // Add a key property for: http://fb.me/react-warning-keys
-      },
-    ];
-    this.setState({
-      markers: nextMarkers,
-    });
+      }]
+    })
   }
 
-  // Examples Marker
-  // markers: [{
-  // position: {
-  //   lat: 30.2672,
-  //   lng: -97.7431,
-  // },
-  // key: `Taiwan`,
-  // defaultAnimation: 2,
-  // }]
+  shouldComponentUpdate(nextProps, nextState){
+    if(this.props.center.lat === nextProps.center.lat){
+      return false
+    }else{
+      return true
+    }
+  }
 
   render(){
-    // const markers = this.props.markers || [];
-    return(
-      <div>
-      map is not showing up for some reason
-        <GoogleMap
-          onClick={this.handleMapClick.bind(this)}
-          defaultZoom={12}
-          defaultCenter={this.props.center} >
+    const AsyncMap = withScriptjs(
+      withGoogleMap(
+        props => (
+          <GoogleMap
+            defaultZoom={this.props.zoom}
+            defaultCenter={{ lat: this.props.center.lat, lng: this.props.center.lng }}
+          >
           {this.state.markers.map((marker, index) => (
-            <Marker {...marker} />
+            <Marker {...marker}
+            />
           )
         )}
-        </GoogleMap>
-      </div>
+          </GoogleMap>
+        )
+      )
     )
+    var map
+    if(this.props.center.lat !== undefined){
+      map = <AsyncMap
+        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyBK0dnnnYasY4DeTeeZ6DUenu-kGkimIOI"
+        loadingElement={
+          <div style={{ height: `100%` }} />
+        }
+        containerElement={
+          <div style={{ height: this.props.height }} />
+        }
+        mapElement={
+          <div style={{ height: `100%` }} />
+        }
+      />
+    }else{
+      map = <div style={{height: this.props.height}} />
+    }
+    return(map)
   }
 }
 
-export default withGoogleMap(Map);
+export default Map

@@ -3,73 +3,83 @@ import 'whatwg-fetch';
 // import { Favorites, Test } from '../fetch/fetch';
 import Map from './map/map'
 import './home.css'
-// key=AIzaSyD-KvhfCHz8YbZguRazLIorA7RaTKksga0
-
 
 class Home extends Component {
   constructor(){
     super();
     this.state = {
-      location: '',
-      restaurant_name: []
+      query: "",
+      restaurant_name: "",
+      phone: "",
+      address: "",
+      location: "",
+      center: {
+        lat: 40.7128,
+        lng: -74.0059
+      }
     }
   }
 
-
-  componentWillMount() {
-    // const fav = Favorites();
-    // this.setState({
-    //   restaurant_name: fav
-    // })
-    fetch('http://127.0.0.1:5000/favorites')
-      .then((response) => {
-        return response.json()
-      })
-      .then((json) => {
-        for (let i = 0; i < json.length; i++) {
-          let joined = this.state.restaurant_name.concat(json[i]['restaurant_name']);
-
-          this.setState({
-            "restaurant_name": joined
-          })
-        }
-        console.log(this.state.restaurant_name.splice(this.state.restaurant_name))
-      })
-      .catch((ex) =>  {
-        console.log('parsing failed', ex)
-      })
-    }
-
   Location(event){
-    this.setState({location: event.target.value});
+    this.setState({query: event.target.value});
   }
 
   handleSubmit(){
-    console.log('This is submitted to get a request of location');
-    console.log(this.state.location);
-    console.log(this.state.restaurant_name)
+    const {query} = this.state
+    console.log('This is submitted to get a request of location')
+    fetch('http://127.0.0.1:5000/maps?location=' + query)
+        .then((response) => {
+          return response.json()
+        })
+        .then((json) => {
+          //   let joined = restaurant_name.concat(json[0]['restaurant_name']);
+          this.setState({
+            restaurant_name: json.name,
+            phone: json.phone,
+            address: json.address,
+            location: json.location,
+            center: {
+              lat: json.location.lat,
+              lng: json.location.lng
+            }
+          })
+        })
+        .catch((ex) =>  {
+          console.log('parsing failed', ex)
+        })
   }
 
+  // center={{ lat: center.lat, lng: center.lng }}
+  // location={location}
+  // containerElement={<div style={{height: 100+'%'}} /> }
+  // mapElement={<div style={{height:100+'%'}} />}
   render(){
+    const {query, restaurant_name, phone, address, center} = this.state
+    // console.log(center)
+    // console.log(location)
     return(
       <div>
-        <h1> Hi Home </h1>
-        <h3> Below is information from api  </h3>
-          {this.state.restaurant_name}
           <div className="SearchMap">
             <form onSubmit={this.handleSubmit.bind(this)}>
               <label>
-                Address:
-                <input type="text" value={this.state.location} onChange={this.Location.bind(this)} />
+                <input className="form-control" type="text" placeholder="Search a location"
+                value={query} onChange={(e) => this.Location(e)} />
               </label>
-              <input type="submit" value="Submit" />
+              <button className="btn" type="submit"  >Time to Eat! </button>
             </form>
             <div className="Map">
               <Map
-                center={{ lat: 30.2672, lng: -97.7431 }}
-                containerElement={<div style={{height: 100+'%'}} /> }
-                mapElement={<div style={{height:100+'%'}} />}
+                center={center}
+                location={center}
+                height='100%'
+                zoom={12}
                 />
+
+              <div className="Information">
+                Restaurant Name: {restaurant_name} <br/>
+                Address: {address} <br />
+                phone: {phone}
+              </div>
             </div>
           </div>
       </div>

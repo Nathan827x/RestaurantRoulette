@@ -1,10 +1,18 @@
 /*Just testing CSS*/
 .SearchMap{
-  background-size: 100%;
-  background-color: Orange;
+  height: 100%;
+  width: 100%;
+  text-align: center;
 }
 
 .Map {
-  height: 400px;
-  width: 400px;
+  height: 25em;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.Information {
+  height: auto;
+  width: auto;
+  text-align: left;
 }
