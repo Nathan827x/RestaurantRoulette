@@ -142,11 +142,13 @@ def maps():
     params = {
      'query': request.args.get('location'),
      'radius': request.args.get('radius') or '5000',
+     'maxprice': request.args.get('maxprice') or '4',
      'type': 'restaurant',
      'key': key
     }
     ########BY DEFAULT IT WILL SEND A LOT OF PLACES!!!! NO FIX YET BY GOOGLE
     search_json = requests.get(search_url, params=params).json()
+    # return jsonify(search_json)
     # print search_json
     results = {}
     # for index, restaurant in enumerate(search_json["results"]):
@@ -163,6 +165,7 @@ def maps():
             details_resp = requests.get(details_url, params=details_payload)
             details_json = details_resp.json()
             results['phone'] = details_json['result']['formatted_phone_number']
+            results['price_level'] = restaurant['price_level']
             flag = False
 
     resMessage = results
