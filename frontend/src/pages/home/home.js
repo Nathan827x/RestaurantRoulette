@@ -58,10 +58,6 @@ class Home extends Component {
     this.setState({
       max: cost.target.value
     })
-
-    for (let i = 0; i < this.state.max; i++){
-      console.log("$")
-    }
   }
 
   render(){
